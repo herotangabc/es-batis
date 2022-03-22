@@ -1,0 +1,20 @@
+{
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "compilerOptions": {
+    // "sourceMap": true,
+    "declaration": true,
+    "module": "CommonJS",
+    "target": "es2020",
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitAny": false,
+
+    "baseUrl": "src/main"
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["**/node_modules", "src/test/**"]
+}

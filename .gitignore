@@ -1,0 +1,12 @@
+.idea
+.lh
+.env
+.VSCodeCounter
+**/node_modules
+**/dist
+coverage
+.git
+*.iml
+*.log
+.serverless
+.DS_Store
