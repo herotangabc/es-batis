@@ -4,20 +4,27 @@
 name: Node.js Package
 
 on:
-  workflow_dispatch:
+  release:
+    # This specifies that the build will be triggered when we publish a release
+    types: [published]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+        # "ref" specifies the branch to check out.
+        # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
+         ref: ${{ github.event.release.target_commitish }}
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-   #   - run: yarn
-   #   - run: yarn build
-   #   - run: yarn test
-      - run: npm -v
+          registry-url: https://registry.npmjs.org/
+      - run: yarn
+      - run: yarn version ${{ github.event.release.tag_name }}
+      - run: yarn build
+      - run: yarn test
 
   publish-npm:
     needs: build
@@ -35,6 +42,6 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      - run: npm publish
+      - run: yarn publish
 
 
