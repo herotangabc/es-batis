@@ -14,9 +14,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-      - run: yarn
-      - run: yarn build
-      - run: yarn test
+   #   - run: yarn
+   #   - run: yarn build
+   #   - run: yarn test
+      - run: npm -v
 
   publish-npm:
     needs: build
