@@ -28,6 +28,9 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
 #      - run: npm ci
+      - run: npm set init.author.name "herotangabc"
+      - run: npm set init.author.email "herotangabc@hotmail.com"
+      - run: npm set init.author.url "https://www.npmjs.com/~herotangabc"
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
