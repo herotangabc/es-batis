@@ -32,7 +32,6 @@ jobs:
       - run: npm set init.author.email "herotangabc@hotmail.com"
       - run: npm set init.author.url "https://www.npmjs.com/~herotangabc"
       - run: npm publish
-    #  - run: npm whoami 
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
