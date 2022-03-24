@@ -37,6 +37,7 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: yarn publish
 
 #   publish-npm:
 #     needs: build
