@@ -6,7 +6,7 @@ name: Node.js Package
 on:
   release:
     # This specifies that the build will be triggered when we publish a release
-    types: [created]
+    types: [published]
 
 jobs:
   build:
