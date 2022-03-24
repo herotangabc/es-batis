@@ -6,12 +6,13 @@ name: Node.js Package
 on:
   release:
     # This specifies that the build will be triggered when we publish a release
-    types: [published]
+    types: [created]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      
       - uses: actions/checkout@v2
         with:
         # "ref" specifies the branch to check out.
