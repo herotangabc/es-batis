@@ -2,47 +2,49 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
 
 name: Node.js Package
-
+    # This specifies that the build will be triggered when we publish a release
 on:
   release:
-    # This specifies that the build will be triggered when we publish a release
-    types: [created]
+ #   types: [created]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      
-      - uses: actions/checkout@v2
-        with:
-        # "ref" specifies the branch to check out.
-        # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
-         ref: ${{ github.event.release.target_commitish }}
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          registry-url: https://registry.npmjs.org/
-      - run: yarn
-      - run: yarn version ${{ github.event.release.tag_name }}
-      - run: yarn build
-      - run: yarn test
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
+#       - uses: actions/checkout@v2
+#         with:
+#         # "ref" specifies the branch to check out.
+#         # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
+#          ref: ${{ github.event.release.target_commitish }}
+#       - uses: actions/setup-node@v2
+#         with:
+#           node-version: 14
+#           registry-url: https://registry.npmjs.org/
+#       - run: yarn
+#       - run: yarn version ${{ github.event.release.tag_name }}
+#       - run: yarn build
+#       - run: yarn test
 
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          registry-url: https://registry.npmjs.org/
-#      - run: npm ci
-#       - run: npm set init.author.name "herotangabc"
-#       - run: npm set init.author.email "herotangabc@hotmail.com"
-#       - run: npm set init.author.url "https://www.npmjs.com/~herotangabc"
-      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      - run: yarn publish
+#   publish-npm:
+#     needs: build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: actions/setup-node@v2
+#         with:
+#           node-version: 14
+#           registry-url: https://registry.npmjs.org/
+# #      - run: npm ci
+# #       - run: npm set init.author.name "herotangabc"
+# #       - run: npm set init.author.email "herotangabc@hotmail.com"
+# #       - run: npm set init.author.url "https://www.npmjs.com/~herotangabc"
+#       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
+#         env:
+#           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+#       - run: yarn publish
 
 
