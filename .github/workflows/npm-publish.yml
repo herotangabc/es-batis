@@ -5,7 +5,7 @@ name: Node.js Package
     # This specifies that the build will be triggered when we publish a release
 on:
   release:
- #   types: [created]
+   types: [created]
 # on:
 #   push:
 #     branches:
@@ -17,23 +17,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - env:
-          EVENT_CONTEXT: ${{ toJSON(github) }}
-        run: |
-          echo $EVENT_CONTEXT
-#       - uses: actions/checkout@v2
-#         with:
-#         # "ref" specifies the branch to check out.
-#         # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
-#          ref: ${{ github.event.release.target_commitish }}
-#       - uses: actions/setup-node@v2
-#         with:
-#           node-version: 14
-#           registry-url: https://registry.npmjs.org/
-#       - run: yarn
-#       - run: yarn version ${{ github.event.release.tag_name }}
-#       - run: yarn build
-#       - run: yarn test
+#       - env:
+#           EVENT_CONTEXT: ${{ toJSON(github) }}
+#         run: |
+#           echo $EVENT_CONTEXT
+      - uses: actions/checkout@v2
+        with:
+        # "ref" specifies the branch to check out.
+        # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
+         ref: ${{ github.event.release.target_commitish }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: yarn
+      - run: yarn version ${{ github.event.release.tag_name }}
+      - run: yarn build
+      - run: yarn test
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 
 #   publish-npm:
 #     needs: build
