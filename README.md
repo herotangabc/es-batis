@@ -1,3 +1,7 @@
+[![Node.js Package](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml)
+
+---
+
 **mybatis in nodejs,also support Single Table ORM**
 
 ---
