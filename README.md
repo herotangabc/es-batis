@@ -1,4 +1,4 @@
-[![Node.js Package](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml)
+[![Node.js Package](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml/badge.svg?event=release)](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml)
 
 ---
 
