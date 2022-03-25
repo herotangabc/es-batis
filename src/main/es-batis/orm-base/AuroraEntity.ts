@@ -208,11 +208,11 @@ export abstract class AuroraEntity {
    */
   async load<T extends AuroraEntity>(
     this: T,
+    id: number | string | Record<string, string | number> | undefined = undefined,
     includes: EntityFieldsType<T> = undefined,
     forupdate: boolean = false,
-    id: number | string | Record<string, string | number> | undefined = undefined,
     transactionId: string | undefined = undefined
-  ): Promise<AuroraEntity | null> {
+  ): Promise<T | null> {
     const idMetas = this.#aquireAuroraModel()
     const idMetaArr = Object.entries(idMetas ?? {}).filter(([_k, v]) => v.idType)
     this.assertIdValueNotEmpty(idMetaArr, id)
@@ -284,10 +284,10 @@ export abstract class AuroraEntity {
    */
   async loadForUpdate<T extends AuroraEntity>(
     this: T,
-    includes: EntityFieldsType<typeof this> = undefined,
     id: any = undefined,
+    includes: EntityFieldsType<typeof this> = undefined,
     transactionId: string | undefined = undefined
-  ): Promise<AuroraEntity | null> {
-    return await this.load(includes, true, id, transactionId)
+  ): Promise<T | null> {
+    return await this.load(id, includes, true, transactionId)
   }
 }

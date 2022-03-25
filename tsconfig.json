@@ -12,9 +12,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noImplicitAny": false,
-
+    "allowJs": false,
     "baseUrl": "src/main"
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["**/node_modules", "src/test/**"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/node_modules", "src/test/**", "dist"]
 }

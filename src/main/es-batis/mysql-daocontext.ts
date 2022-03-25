@@ -23,7 +23,7 @@ type MySQLConnectionInfo = {
   password?: string
   database?: string
   debug?: string
-  connectTimeout: number
+  connectTimeout?: number
 }
 
 
