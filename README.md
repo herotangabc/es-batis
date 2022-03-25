@@ -78,7 +78,7 @@ const daoContext = new MySqlDaoContext({
 })
 await dao.initialize()
 //additional parameter for ORM supporting in dynamic SQL,see the next sample
-dao = initDaoContext({ dao,{SystemMst} })
+dao = initDaoContext({ dao,types:{SystemMst} })
 
 
 let systemMst = new SystemMst()
@@ -112,7 +112,7 @@ const daoContext = new MySqlDaoContext({
   password: 'password',
 })
 await dao.initialize()
-dao = initDaoContext({ dao,{SystemMst} })
+dao = initDaoContext({ dao,types:{SystemMst} })
 
 //initialization at the same way as the previous sample
 const sql = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
