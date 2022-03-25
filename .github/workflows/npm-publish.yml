@@ -31,13 +31,22 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: yarn
+      - run: git config --global user.name "GitHub CD bot"
+      - run: git config --global user.email "github-cd-bot@example.com"
       - run: yarn version --new-version ${{ github.event.release.tag_name }}
       - run: yarn build
       - run: yarn test
-      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+#       - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > $NPM_CONFIG_USERCONFIG
+#         env:
+#           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       - run: yarn publish
+        env:
+        # Use a token to publish to NPM. See below for how to set it up
+         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: git push
+        env:
+        # The secret is passed automatically. Nothing to configure.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
 #   publish-npm:
 #     needs: build
