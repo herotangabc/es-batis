@@ -1,6 +1,6 @@
 {
   "name": "es-batis",
-  "version": "0.0.40-alpha",
+  "version": "0.0.41-alpha",
   "description": "mybatis dynamic SQL for nodejs14+",
   "main": "dist/index.js",
   "files": [
