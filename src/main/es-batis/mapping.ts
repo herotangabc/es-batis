@@ -137,7 +137,8 @@ class SqlBoundString extends SqlBound {
         paramValue == null ||
         typeof paramValue === 'number' ||
         typeof paramValue === 'boolean' ||
-        typeof paramValue === 'string'
+        typeof paramValue === 'string' ||
+        paramValue instanceof Buffer
       ) {
       } else if (paramValue instanceof Date) {
         paramValue = dayjs(paramValue).format('YYYY-MM-DD HH:mm:ss.SSS')
@@ -153,7 +154,17 @@ class SqlBoundString extends SqlBound {
         const paramName = sqlcommand.addParameter(paramValue)
         return `:${paramName} /* ${valueFormular} */ `
       } else {
-        return paramValue ?? ''
+        if (paramValue instanceof Buffer) {
+          if (paramValue.byteLength > 64) {
+            throw new Error(
+              `[line:${this.lineNumber}] - farmular:[${valueFormular}]:inline SQL for type Buffer is supported,but the Buffer length is toooo long,should less than 64,but got ${paramValue.byteLength}.consider binding parameter instead`
+            )
+          } else {
+            return `X'${paramValue.toString('hex')}'`
+          }
+        } else {
+          return paramValue ?? 'NULL'
+        }
       }
     })
     return sql
