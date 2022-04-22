@@ -1,0 +1,383 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`3. update sql with if test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "銀行１",
+  },
+  "sql": "update
+            bank AS t1
+        set
+t1.name = :p0 /* bank.name */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`4. update sql with choose when test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "銀行１",
+  },
+  "sql": "update
+            bank AS t1
+        set
+t1.name = :p0 /* bank.name */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`5. update sql with choose when other test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "銀行１",
+  },
+  "sql": "update
+            bank AS t1
+        set
+t1.name = :p0 /* bank.name */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`6. update sql with choose when other test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "update
+            bank AS t1
+        set
+t1.name = null
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`7. select sql with foreach test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 2,
+  "parameters": Object {
+    "p0": "銀行１",
+    "p1": "銀行２",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ t1.name IN
+( :p0 /* item.name */ 
+ , :p1 /* item.name */ 
+ )
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`8. select sql with foreach nested test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 4,
+  "parameters": Object {
+    "p0": "銀行１",
+    "p1": "銀行２",
+    "p2": "銀行３",
+    "p3": "銀行４",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ t1.name IN
+(  :p0 /* bankname */ 
+ , :p1 /* bankname */ 
+  ,  :p2 /* bankname */ 
+ , :p3 /* bankname */ 
+  )
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`9. select sql with foreach nested partial empty test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 2,
+  "parameters": Object {
+    "p0": "銀行３",
+    "p1": "銀行４",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ t1.name IN
+(  :p0 /* bankname */ 
+ , :p1 /* bankname */ 
+  )
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`10. select sql with foreach nested null test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "select * from
+            bank AS t1
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`11. select sql with otherwise nested foreach test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ id IN
+( 1
+ , 2
+ )
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`13. select sql with if test has _ $env variable test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "a",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ANDname = :p0 /* _ */ 
+AND type = 'test13'
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`14. select sql with if test and logic test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 2,
+  "parameters": Object {
+    "p0": "a",
+    "p1": "a",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ name = :p0 /* _ */ 
+AND alias = :p1 /* _ */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`15. select sql with if under foreach tag with scoped variables test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 2,
+  "parameters": Object {
+    "p0": "a1",
+    "p1": "a3",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+
+ alias = :p0 /* item.alias */ 
+ OR alias = :p1 /* item.alias */ 
+ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`18. select sql without namespace 1`] = `
+SqlCommand {
+  "currentParameterSeq": 4,
+  "parameters": Object {
+    "p0": "a1",
+    "p1": "a2",
+    "p2": "c2",
+    "p3": "a3",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+
+ alias = :p0 /* item.alias */ 
+ OR alias = :p1 /* item.alias */ 
+ OR alias = :p2 /* item.alias */ 
+ OR alias = :p3 /* item.alias */ 
+ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`21. foreach _ collection test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 4,
+  "parameters": Object {
+    "p0": "a1",
+    "p1": "a2",
+    "p2": "c2",
+    "p3": "a3",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+
+ alias > :p0 /* item.alias */ 
+ OR alias > :p1 /* item.alias */ 
+ OR alias > :p2 /* item.alias */ 
+ OR alias > :p3 /* item.alias */ 
+ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`22. empty where test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "select * from
+            bank AS t1
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`23. bind for escape of exclamation mark test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 2,
+  "parameters": Object {
+    "p0": "\\\\\\\\' \\\\%AND 1 != \\\\_2",
+    "p1": "\\\\\\\\g AND '",
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+
+ alias like concat('%',:p0 /* aliasLike */ ,'%')
+ OR alias like concat('%',:p1 /* aliasLike */ ,'%')
+ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`24. bind for escape of exclamation mark test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": 1,
+  },
+  "sql": "select * from
+            bank AS t1
+ WHERE
+ alias LIKE '\\\\\\\\\\\\' AND 1 !!= 2' escape '!'
+AND name LIKE '\\\\\\\\\\\\' AND 1 !!= 2' escape '!'
+AND balance = :p0 /* accountMoney */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`25. date type in parameter test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "2021-10-27 13:00:46.448",
+  },
+  "sql": "select * from
+bank AS t1
+ WHERE
+ created > :p0 /* created */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`26. dayjs type in parameter test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "2021-10-27 13:00:46.448",
+  },
+  "sql": "select * from
+bank AS t1
+ WHERE
+ created > :p0 /* created */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`28. empty trim tag test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "select * from
+bank AS t1
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`29. trim tag test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": "bank001",
+  },
+  "sql": "select * from
+bank AS t1
+ WHERE
+ (
+ ALIAS = :p0 /* alias */  
+)
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`30. SQL Buffer parameter test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": Object {
+      "data": Array [
+        1,
+      ],
+      "type": "Buffer",
+    },
+  },
+  "sql": "select * from
+bank AS t1
+ WHERE
+id =:p0 /* id */ 
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`31. Inline SQL Buffer test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "select * from
+bank AS t1
+ WHERE
+id =X'01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101'
+",
+  "sqlType": undefined,
+}
+`;
