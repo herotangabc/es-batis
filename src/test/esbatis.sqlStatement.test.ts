@@ -1,5 +1,6 @@
 import sqlTemplate, { DaoContext, initDaoContext } from 'es-batis';
 import type { CallbackFnType } from 'es-batis/daocontext';
+import type { SqlBound } from 'es-batis/mapping'
 //fix Encoding not recognized: 'cesu8' (searched as: 'cesu8') issue
 //https://stackoverflow.com/questions/46227783/encoding-not-recognized-in-jest-js
 //require('mysql2/node_modules/iconv-lite').encodingExists('foo');

@@ -1,5 +1,6 @@
 import sqlTemplate, { DaoContext, initDaoContext } from 'es-batis';
 import { templateManager, SqlCommand } from 'es-batis/mapping'
+import type { SqlBound } from 'es-batis/mapping'
 //fix Encoding not recognized: 'cesu8' (searched as: 'cesu8') issue
 //https://stackoverflow.com/questions/46227783/encoding-not-recognized-in-jest-js
 // require('mysql2/node_modules/iconv-lite').encodingExists('foo');
@@ -159,7 +160,7 @@ test('3. update sql with if test', async () => {
     </update>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.updateBank001")
+  const result = sql.getSqlFactory("wb3101.updateBank001") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     bank: {
@@ -188,7 +189,7 @@ test('4. update sql with choose when test', async () => {
     </update>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.updateBank001")
+  const result = sql.getSqlFactory("wb3101.updateBank001") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     bank: {
@@ -219,7 +220,7 @@ test('5. update sql with choose when other test', async () => {
     </update>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.updateBank002")
+  const result = sql.getSqlFactory("wb3101.updateBank002") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     bank: {
@@ -250,7 +251,7 @@ test('6. update sql with choose when other test', async () => {
     </update>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.updateBank002")
+  const result = sql.getSqlFactory("wb3101.updateBank002") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     bank: {
@@ -278,7 +279,7 @@ test('7. select sql with foreach test', async () => {
     </select>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.selectBank001")
+  const result = sql.getSqlFactory("wb3101.selectBank001") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     names: [{ name: '銀行１' }, { name: '銀行２' }]
@@ -307,7 +308,7 @@ test('8. select sql with foreach nested test', async () => {
     </select>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.selectBank001")
+  const result = sql.getSqlFactory("wb3101.selectBank001") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = { names: [{ banks: ['銀行１', '銀行２'] }, { banks: ['銀行３', '銀行４'] }] }
 
@@ -336,7 +337,7 @@ test('9. select sql with foreach nested partial empty test', async () => {
     </select>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.selectBank001")
+  const result = sql.getSqlFactory("wb3101.selectBank001") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = { names: [{ banks: null }, { banks: ['銀行３', '銀行４'] }] }
 
@@ -366,7 +367,7 @@ test('10. select sql with foreach nested null test', async () => {
     </select>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.selectBank001")
+  const result = sql.getSqlFactory("wb3101.selectBank001") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = { names: null }
 
@@ -410,7 +411,7 @@ test('11. select sql with otherwise nested foreach test', async () => {
     </select>
 </mapper>
     `
-  const result = sql.getSqlFactory("wb3101.selectBank011")
+  const result = sql.getSqlFactory("wb3101.selectBank011") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = { names: null, id: 1, v: [1, 2] }
 
@@ -455,7 +456,7 @@ test('12. select sql with choose error test', async () => {
 </mapper>
     `
   let f = () => {
-    return sql.getSqlFactory("wb3101.selectBank012")
+    return sql.getSqlFactory("wb3101.selectBank012") as SqlBound
   }
   expect(f).toThrowError()
 }, 5000)
@@ -478,7 +479,7 @@ test('13. select sql with if test has _ $env variable test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("wb3101.selectBank013")
+  let factory = sql.getSqlFactory("wb3101.selectBank013") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = 'a'
   factory.appendSql(sqlcommand, obj)
@@ -506,7 +507,7 @@ test('14. select sql with if test and logic test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("wb3101.selectBank014")
+  let factory = sql.getSqlFactory("wb3101.selectBank014") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = 'a'
   factory.appendSql(sqlcommand, obj)
@@ -534,7 +535,7 @@ test('15. select sql with if under foreach tag with scoped variables test', asyn
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("wb3101.selectBank015")
+  let factory = sql.getSqlFactory("wb3101.selectBank015") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     names: [
@@ -569,7 +570,7 @@ test('16. select sql with if error test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("wb3101.selectBank016")
+  let factory = sql.getSqlFactory("wb3101.selectBank016") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     names: [
@@ -601,7 +602,7 @@ test('17. select sql with param not set test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("wb3101.selectBank017")
+  let factory = sql.getSqlFactory("wb3101.selectBank017") as SqlBound
   const sqlcommand = new SqlCommand()
   expect(() => { factory.appendSql(sqlcommand) }).toThrowError()
 
@@ -624,7 +625,7 @@ test('18. select sql without namespace', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank018")
+  let factory = sql.getSqlFactory("selectBank018") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = {
     names: [
@@ -656,7 +657,7 @@ test('19. invalid sql id', async () => {
     </select>
 </mapper>
     `
-  expect(() => { sql.getSqlFactory("..selectBank019") }).toThrowError()
+  expect(() => { sql.getSqlFactory("..selectBank019") as SqlBound }).toThrowError()
 }, 5000)
 
 test('20. namespace not found', async () => {
@@ -675,7 +676,7 @@ test('20. namespace not found', async () => {
     </select>
 </mapper>
     `
-  expect(() => { sql.getSqlFactory("x.selectBank019") }).toThrowError()
+  expect(() => { sql.getSqlFactory("x.selectBank019") as SqlBound }).toThrowError()
 }, 5000)
 
 test('21. foreach _ collection test', async () => {
@@ -694,7 +695,7 @@ test('21. foreach _ collection test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank021")
+  let factory = sql.getSqlFactory("selectBank021") as SqlBound
   const sqlcommand = new SqlCommand()
   const obj = [
     { name: "aaa", alias: "a1" },
@@ -722,7 +723,7 @@ test('22. empty where test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank022")
+  let factory = sql.getSqlFactory("selectBank022") as SqlBound
   const sqlcommand = new SqlCommand()
   factory.appendSql(sqlcommand, null)
   expect(sqlcommand).toMatchSnapshot()
@@ -749,7 +750,7 @@ test('23. bind for escape of exclamation mark test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank023")
+  let factory = sql.getSqlFactory("selectBank023") as SqlBound
   const sqlcommand = new SqlCommand()
   factory.appendSql(sqlcommand, [{ alias: "\\' %AND 1 != _2" }, { alias: "\\g AND '" }])
   expect(sqlcommand).toMatchSnapshot()
@@ -780,7 +781,7 @@ test('24. bind for escape of exclamation mark test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank024")
+  let factory = sql.getSqlFactory("selectBank024") as SqlBound
   const sqlcommand = new SqlCommand()
   factory.appendSql(sqlcommand, { alias: "\\' AND 1 != 2", name: "'\\!", balance: 0 })
   expect(sqlcommand).toMatchSnapshot()
@@ -801,7 +802,7 @@ test('25. date type in parameter test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank025")
+  let factory = sql.getSqlFactory("selectBank025") as SqlBound
   const sqlcommand = new SqlCommand()
   const date = new Date(1635310846448);
   factory.appendSql(sqlcommand, { created: date })
@@ -823,7 +824,7 @@ test('26. dayjs type in parameter test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank026")
+  let factory = sql.getSqlFactory("selectBank026") as SqlBound
   const sqlcommand = new SqlCommand()
   const dayjsObj = dayjs(new Date(1635310846448));
   factory.appendSql(sqlcommand, { created: dayjsObj })
@@ -845,7 +846,7 @@ test('27. other unsuported type in parameter test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank027")
+  let factory = sql.getSqlFactory("selectBank027") as SqlBound
   const sqlcommand = new SqlCommand()
   const unsuportedObj = {}
   expect(() => {
@@ -877,7 +878,7 @@ test('28. empty trim tag test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank028")
+  let factory = sql.getSqlFactory("selectBank028") as SqlBound
   const sqlcommand = new SqlCommand()
 
   factory.appendSql(sqlcommand, {})
@@ -907,7 +908,7 @@ test('29. trim tag test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank029")
+  let factory = sql.getSqlFactory("selectBank029") as SqlBound
   const sqlcommand = new SqlCommand()
 
   factory.appendSql(sqlcommand, { alias: 'bank001' })
@@ -929,7 +930,7 @@ test('30. SQL Buffer parameter test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank030")
+  let factory = sql.getSqlFactory("selectBank030") as SqlBound
   const sqlcommand = new SqlCommand()
 
   const buf = Buffer.alloc(1, '\u0001')
@@ -952,7 +953,7 @@ test('31. Inline SQL Buffer test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank030")
+  let factory = sql.getSqlFactory("selectBank030") as SqlBound
   const sqlcommand = new SqlCommand()
 
   const buf = Buffer.alloc(64, '\u0001'.repeat(64))
@@ -975,7 +976,7 @@ test('32. Inline SQL Buffer length > 64 test', async () => {
     </select>
 </mapper>
     `
-  let factory = sql.getSqlFactory("selectBank030")
+  let factory = sql.getSqlFactory("selectBank030") as SqlBound
   const sqlcommand = new SqlCommand()
 
   const buf = Buffer.alloc(65, '\u0001'.repeat(65))
@@ -985,4 +986,86 @@ test('32. Inline SQL Buffer length > 64 test', async () => {
   }).toThrowError(new Error('[line:7] - farmular:[id]:inline SQL for type Buffer is supported,but the Buffer length is toooo long,should less than 64,but got 65.consider binding parameter instead'))
 }, 5000)
 
+test('33. include sql test', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const sql = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
+<mapper>
+    <sql id="sql1">
+      <where>
+         id =#{id} limit \${limit1}
+      </where>
+    </sql>
+    <select id="selectBank031"   resultType="string">
+    select * from
+    <![CDATA[
+        bank AS t1 ]]>
+        <include refid='sql1'>
+        <property name="limit1" value="\${limit}"/>
+        </include>
+    </select>
+</mapper>
+    `
+  let factory = sql.getSqlFactory('selectBank031') as SqlBound
+  const sqlcommand = new SqlCommand()
+
+  factory.appendSql(sqlcommand, { id: 22, limit: 10 })
+  expect(sqlcommand).toMatchSnapshot()
+}, 5000)
+
+test('34. include sql test2', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const sql = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="wb3101">
+<select id="selectBank032"   resultType="string">
+select * from
+<![CDATA[
+  bank AS t1 ]]>
+  <include refid='sql1'>
+  <property name="limit1" value="\${limit}"/>
+  </include>
+  </select>
+  <sql id="sql1">
+    <where>
+       id =#{id} limit \${limit1}
+    </where>
+  </sql>
+</mapper>
+    `
+  let factory = sql.getSqlFactory('wb3101.selectBank032') as SqlBound
+  const sqlcommand = new SqlCommand()
+
+  factory.appendSql(sqlcommand, { id: 22, limit: 10 })
+  expect(sqlcommand).toMatchSnapshot()
+}, 5000)
+
+test('35. include sql test3', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const sql = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="wb3101">
+<select id="selectBank033"   resultType="string">
+select * from
+<![CDATA[
+  bank AS t1 ]]>
+  <include refid='wb3100.sql1'>
+  <property name="limit1" value="\${limit}"/>
+  <property name="column" value="id"/>
+  </include>
+  </select>
+</mapper>
+    `
+  const sqlInclude = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="wb3100">
+  <sql id="sql1">
+    <where>
+       \${column} =#{id} limit \${limit1}
+    </where>
+  </sql>
+</mapper>
+    `
+  let factory = sql.getSqlFactory('wb3101.selectBank033') as SqlBound
+  const sqlcommand = new SqlCommand()
+
+  factory.appendSql(sqlcommand, { id: 22, limit: 10 })
+  expect(sqlcommand).toMatchSnapshot()
+}, 5000)
 
