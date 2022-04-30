@@ -25,6 +25,7 @@ enum SqlType {
   update,
   insert,
   delete,
+  sql,
 }
 
 // if(process.env.OPT_ENV == 'local'){
@@ -94,6 +95,45 @@ export class SqlBound {
   }
 }
 
+const regex = /(#|\$){([\t\sa-z.A-Z0-9_$]+)}/gi
+const wordRegex = /^[$\w]+\b/
+
+const evaluateNestedProperty = (
+  lineNumber: number | undefined,
+  propertyFormular: string,
+  data: any,
+  extentionData?: ExtentionDataType
+): any => {
+  let paramValue = null
+  try {
+    const varNameArr = wordRegex.exec(propertyFormular)
+    //最近的scope优先
+    if (varNameArr) {
+      //解析出表达式中第一个变量
+      const varName = varNameArr[0]
+      if (varName == '_') {
+        paramValue = get({ _: data }, propertyFormular, { default: null })
+      } else if (varName == '$env') {
+        paramValue = get({ $env: process.env }, propertyFormular, {
+          default: null,
+        })
+      } else if (extentionData?.payload && varName in extentionData?.payload) {
+        paramValue = get(extentionData?.payload, propertyFormular, {
+          default: null,
+        })
+      } else {
+        paramValue = get(data, propertyFormular, { default: null })
+      }
+      return paramValue
+    } else {
+      throw new Error(`[line:${lineNumber}] - injected expression is invalid:${propertyFormular}`)
+    }
+  } catch (err) {
+    throw new Error(
+      `[line:${lineNumber}] - error get value from farmular:[${propertyFormular}]:${(err as any).message}`
+    )
+  }
+}
 class SqlBoundString extends SqlBound {
   #text
   constructor(text: string, lineNumber: number) {
@@ -101,11 +141,9 @@ class SqlBoundString extends SqlBound {
     this.#text = text.trim()
   }
   private processexpression(sqlcommand: SqlCommand, data: any, extentionData?: ExtentionDataType) {
-    const regex = /(#|\$){([\t\sa-z.A-Z0-9_$]+)}/gi
-    const wordRegex = /^[$\w]+\b/
     const sql = this.#text.replace(regex, (str) => {
       const valueFormular = str.substring(2, str.length - 1).trim()
-      let paramValue: any = null
+      let paramValue: any = evaluateNestedProperty(this.lineNumber, valueFormular, data, extentionData)
       try {
         const varNameArr = wordRegex.exec(valueFormular)
         //最近的scope优先
@@ -476,6 +514,73 @@ class SqlBoundBind extends SqlBound {
     return [false, extentionData]
   }
 }
+class SqlBoundInclude extends SqlBound {
+  #refid: string
+  #namespace: string
+  private properties: Record<string, string> = {}
+  constructor(refid: string, namespace: string, lineNumber: number) {
+    super(undefined, undefined, lineNumber)
+    this.#refid = refid
+    this.#namespace = namespace
+  }
+  public addProperty(name: string, value: string) {
+    if (this.properties.hasOwnProperty(name)) {
+      throw new Error(`[line:${this.lineNumber}] - property:${name} already defined`)
+    }
+    this.properties[name] = value
+  }
+  public appendSql(sqlcommand: SqlCommand, data?: any, extentionData?: ExtentionDataType): ReturnTypeOfAppendSql {
+    let sql: SqlBound | null = null
+    if (this.#refid.indexOf('.') > 0) {
+      sql = templateManager.getSqlFactory(this.#refid)
+    } else {
+      sql = templateManager.getSqlFactory(this.#namespace ? `${this.#namespace}.${this.#refid}` : this.#refid)
+    }
+    if (!sql) {
+      throw new Error(`[line:${this.lineNumber}] - refid:${this.#refid} not found`)
+    }
+    if (sql.sqlType != SqlType.sql) {
+      throw new Error(`[line:${this.lineNumber}] - refid:${this.#refid} refers to a none sql tag`)
+    }
+    const sqlcommandTmp = new SqlCommand(undefined, undefined)
+    const propertyShadow = Object.entries(this.properties)
+      .map(([name, value]) => {
+        const trimValue = value.trim()
+        if (trimValue.startsWith('${') && trimValue.endsWith('}')) {
+          const propertyValue = evaluateNestedProperty(
+            this.lineNumber,
+            trimValue.substring(2, trimValue.length - 1).trim(),
+            data,
+            extentionData
+          )
+          return {
+            [name]: propertyValue,
+          }
+        } else {
+          return {
+            [name]: value,
+          }
+        }
+      })
+      .reduce((previous, current) => Object.assign(previous, current), {})
+
+    const extentionDataTmp: ExtentionDataType = {
+      payload: {
+        ...extentionData?.payload,
+        ...propertyShadow,
+      },
+    }
+    sql.appendSql(sqlcommandTmp, data, extentionDataTmp)
+    if (sqlcommandTmp.sql?.trim().length) {
+      sqlcommand.sql += `\n${sqlcommandTmp.sql}`
+      Object.entries(sqlcommandTmp.parameters).forEach(([_k, v]: [string, any]) => sqlcommand.addParameter(v))
+      return [true, extentionData]
+    } else {
+      delete sqlcommandTmp.sql
+      return [false, extentionData]
+    }
+  }
+}
 
 export class TemplateMapManager {
   private mapMapping: Record<string, Mapping>
@@ -507,9 +612,9 @@ export class TemplateMapManager {
     this.mapMapping[namespace] = mapping
     return this
   }
-  public getSqlFactory(sqlId: string): SqlBound {
+  public getSqlFactory(sqlId: string, throws: boolean = true): SqlBound | null {
     if (!sqlId || !/^[a-z0-9]+(\.[a-z0-9]+)*$/gis.test(sqlId)) {
-      throw new Error(`sqlId is not valid:${sqlId}`)
+      throw new Error(`id is not valid:${sqlId}`)
     }
     let nameNamespace, id
     if (sqlId.indexOf('.') > 0) {
@@ -521,7 +626,11 @@ export class TemplateMapManager {
     }
     const mapping = this.mapMapping[nameNamespace]
     if (!mapping) {
-      throw new Error(`mapping [${sqlId}] is not found`)
+      if (throws) {
+        throw new Error(`mapping [${sqlId}] is not found`)
+      } else {
+        return null
+      }
     }
     return mapping.getNo(id)
   }
@@ -565,7 +674,7 @@ export class TemplateMapManager {
   }
 
   public async insert(fullname: string, object: any, transactionId: string | undefined = undefined): Promise<number> {
-    const tag = this.getSqlFactory(fullname)
+    const tag = this.getSqlFactory(fullname) as SqlBound
     if (tag.sqlType != SqlType.insert) {
       throw new Error(`it's not a valid insert mapping.`)
     }
@@ -578,7 +687,7 @@ export class TemplateMapManager {
     return result.numberOfRecordsUpdated as number
   }
   public async update(fullname: string, object: any, transactionId: string | undefined = undefined): Promise<number> {
-    const tag = this.getSqlFactory(fullname)
+    const tag = this.getSqlFactory(fullname) as SqlBound
     if (tag.sqlType != SqlType.update) {
       throw new Error(`it's not a valid update mapping.`)
     }
@@ -588,7 +697,7 @@ export class TemplateMapManager {
     return result.numberOfRecordsUpdated as number
   }
   public async delete(fullname: string, object: any, transactionId: string | undefined = undefined): Promise<number> {
-    const factory = this.getSqlFactory(fullname)
+    const factory = this.getSqlFactory(fullname) as SqlBound
     if (factory.sqlType != SqlType.delete) {
       throw new Error(`it's not a valid delete mapping.`)
     }
@@ -644,7 +753,7 @@ export class TemplateMapManager {
     toCamelcase: 'ON' | 'OFF' | 'NESTED' | ((record: Record<string, any>) => T) = 'OFF',
     transactionId: string | undefined = undefined
   ): Promise<T[]> {
-    const tag = this.getSqlFactory(fullname)
+    const tag = this.getSqlFactory(fullname) as SqlBound
     if (tag.sqlType != SqlType.select) {
       throw new Error(`it's not a valid select mapping:${fullname}`)
     }
@@ -726,7 +835,7 @@ export class TemplateMapManager {
   // }
 }
 
-const validLogicTags = ['choose', 'if', 'foreach', 'bind', 'trim', 'set', 'where']
+const validLogicTags = ['choose', 'if', 'foreach', 'bind', 'trim', 'set', 'where', 'include']
 
 class Mapping {
   #name: string
@@ -734,7 +843,7 @@ class Mapping {
   #sqlMappings: Record<string, SqlBound>
   #xmlDoc: Record<string, Element>
   // #isInit = false
-  static readonly #validSqlBounds = ['select', 'update', 'insert', 'delete']
+  static readonly #validSqlBounds = ['select', 'update', 'insert', 'delete', 'sql']
   public static build(documentElement: HTMLElement, mapping?: Mapping | null): Mapping {
     try {
       if (!mapping) {
@@ -824,6 +933,12 @@ class Mapping {
         } else if (tag.nodeName == 'otherwise') {
           this.readNoOtherwise(tag as Element, thisTag)
           //nohead.add(new SqlBoundOtherwise(noson.textContent??""));
+        } else if (tag.nodeName == 'include') {
+          this.readInclude(tag as Element, thisTag)
+          //nohead.add(new SqlBoundOtherwise(noson.textContent??""));
+        } else if (tag.nodeName == 'property') {
+          this.readProperty(tag as Element, thisTag)
+          //nohead.add(new SqlBoundOtherwise(noson.textContent??""));
         } else if (tag.nodeName == 'bind') {
           this.readBind(tag as Element, thisTag)
           //nohead.add(new SqlBoundOtherwise(noson.textContent??""));
@@ -833,6 +948,37 @@ class Mapping {
         }
       }
     }
+  }
+  private readInclude(includeNode: Element, parentSqlBound: SqlBound) {
+    const lineNumber = (includeNode as any).lineNumber
+    if (!includeNode.attributes.length) {
+      throw new Error(`[line:${lineNumber}] - tag[include] should have refid attribute.`)
+    }
+    let refid
+    if (!(refid = includeNode.getAttribute('refid'))) {
+      throw new Error(`[line:${lineNumber}] - tag[include] refid attribute is required and should not empty.`)
+    }
+    const noInclude = new SqlBoundInclude(refid, this.#name, lineNumber)
+    this.readChildTag(includeNode, noInclude, (tag) => {
+      if (tag.nodeType == tag.ELEMENT_NODE && 'property' !== tag.nodeName) {
+        throw new Error(
+          `[line:${(tag as any).lineNumber}] - tag[${tag.nodeName}] is not recognized inner tag[${includeNode.nodeName
+          }].`
+        )
+      }
+    })
+    parentSqlBound.add(noInclude)
+  }
+  private readProperty(propertyNode: Element, parentSqlBound: SqlBound) {
+    const lineNumber = (propertyNode as any).lineNumber
+    let name, value
+    if (!(name = propertyNode.getAttribute('name'))) {
+      throw new Error(`[line:${lineNumber}] - tag[property] name attribute is required and should not empty.`)
+    }
+    if (!(value = propertyNode.getAttribute('value'))) {
+      throw new Error(`[line:${lineNumber}] - tag[property] value attribute is required and should not empty.`)
+    }
+    ; (parentSqlBound as SqlBoundInclude).addProperty(name, value)
   }
   private readBind(bindNode: Element, parentTag: SqlBound) {
     const lineNumber = (bindNode as any).lineNumber
@@ -853,7 +999,7 @@ class Mapping {
   private readWhere(whereNode: Element, parentSqlBound: SqlBound): void {
     const lineNumber = (whereNode as any).lineNumber
     if (whereNode.attributes.length) {
-      throw new Error(`[line:${lineNumber}] - tag[where] should have tag attribute.`)
+      throw new Error(`[line:${lineNumber}] - tag[where] should have no attribute.`)
     }
     const noWhere = new SqlBoundWhere(lineNumber)
     this.readChildTag(whereNode, noWhere)
@@ -918,7 +1064,7 @@ class Mapping {
   private readChoose(chooseNode: Element, parentSqlBound: SqlBound) {
     const lineNumber = (chooseNode as any).lineNumber
     if (chooseNode.attributes.length) {
-      throw new Error(`[line:${lineNumber}] - tag [choose] should have tag attribute.`)
+      throw new Error(`[line:${lineNumber}] - tag [choose] should have no attribute.`)
     }
     const chooseTag = new SqlBoundChoose(lineNumber)
     let hasOtherwiseTag = false
@@ -957,7 +1103,7 @@ class Mapping {
   private readNoOtherwise(otherwiseNode: Element, tagChoose: SqlBound): void {
     const lineNumber = (otherwiseNode as any).lineNumber
     if (otherwiseNode.attributes.length) {
-      throw new Error(`[line:${lineNumber}] - tag[otherwise] should have tag attribute.`)
+      throw new Error(`[line:${lineNumber}] - tag[otherwise] should have no attribute.`)
     }
     const tagOtherwise = new SqlBoundOtherwise(lineNumber)
     this.readChildTag(otherwiseNode, tagOtherwise)

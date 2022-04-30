@@ -295,7 +295,7 @@ exports[`25. date type in parameter test 1`] = `
 SqlCommand {
   "currentParameterSeq": 1,
   "parameters": Object {
-    "p0": "2021-10-27 13:00:46.448",
+    "p0": "2021-10-27 05:00:46.448",
   },
   "sql": "select * from
 bank AS t1
@@ -377,6 +377,54 @@ SqlCommand {
 bank AS t1
  WHERE
 id =X'01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101'
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`33. include sql test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": 22,
+  },
+  "sql": "select * from
+bank AS t1
+
+ WHERE
+id =:p0 /* id */  limit 10
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`34. include sql test2 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": 22,
+  },
+  "sql": "select * from
+bank AS t1
+
+ WHERE
+id =:p0 /* id */  limit 10
+",
+  "sqlType": undefined,
+}
+`;
+
+exports[`35. include sql test3 1`] = `
+SqlCommand {
+  "currentParameterSeq": 1,
+  "parameters": Object {
+    "p0": 22,
+  },
+  "sql": "select * from
+bank AS t1
+
+ WHERE
+id =:p0 /* id */  limit 10
 ",
   "sqlType": undefined,
 }
