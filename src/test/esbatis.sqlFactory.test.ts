@@ -831,7 +831,7 @@ test('26. dayjs type in parameter test', async () => {
     `
   let factory = sql.getSqlFactory("selectBank026") as SqlBound
   const sqlcommand = new SqlCommand()
-  const dayjsObj = dayjs.tz('2021-10-27 05:00:46');
+  const dayjsObj = dayjs.tz('2021-10-27 05:00:46.448');
   factory.appendSql(sqlcommand, { created: dayjsObj })
   expect(sqlcommand).toMatchSnapshot()
 }, 5000)
