@@ -310,7 +310,7 @@ exports[`26. dayjs type in parameter test 1`] = `
 SqlCommand {
   "currentParameterSeq": 1,
   "parameters": Object {
-    "p0": "2021-10-27 13:00:46.448",
+    "p0": "2021-10-27 05:00:46.448",
   },
   "sql": "select * from
 bank AS t1
