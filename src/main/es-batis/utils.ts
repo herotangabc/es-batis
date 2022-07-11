@@ -148,7 +148,7 @@ export const buildParameters = (
       paramArray.push(lazyFreezeClone(extentionData?.payload[paraName]))
     } else {
       if (data == null) {
-        throw new Error(`tag variable [${paraName}] value can be found since input parameter is falsy`)
+        throw new Error(`variable [${paraName}] can't be found since input parameter is falsy`)
       } else {
         paramArray.push(lazyFreezeClone(data[paraName]))
       }
