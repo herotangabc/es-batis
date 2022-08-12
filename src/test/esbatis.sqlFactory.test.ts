@@ -1,5 +1,6 @@
 import sqlTemplate, { DaoContext, initDaoContext } from 'es-batis';
 import { templateManager, SqlCommand } from 'es-batis/mapping'
+import { camelcase2Underline } from 'es-batis/utils'
 import type { SqlBound } from 'es-batis/mapping'
 //fix Encoding not recognized: 'cesu8' (searched as: 'cesu8') issue
 //https://stackoverflow.com/questions/46227783/encoding-not-recognized-in-jest-js
@@ -1074,3 +1075,9 @@ select * from
   expect(sqlcommand).toMatchSnapshot()
 }, 5000)
 
+test('36.camelcase2Underline', async () => {
+  const text = camelcase2Underline('aAcBc10A')
+  expect(text).toBe('A_AC_BC_10_A')
+  const text1 = camelcase2Underline('ccBc10')
+  expect(text1).toBe('CC_BC_10')
+})

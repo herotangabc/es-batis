@@ -203,7 +203,7 @@ export function camelcase2Underline(camelcaseName: string): string {
     return camelcaseName.toUpperCase()
   } else {
     // return camelcaseName.toUpperCase().replace(/(?!\b)([A-Z])/g, (v) => "_" + v);
-    return camelcaseName.replace(/\B([A-Z])/g, '_$1').toUpperCase()
+    return camelcaseName.replace(/\B([A-Z]|\d+)/g, '_$1').toUpperCase()
   }
 }
 
