@@ -240,7 +240,7 @@ export abstract class AuroraEntity {
     const sqlcommand = new SqlCommand()
     sqlcommand.sql = `SELECT \n${Object.entries(selectOriginColumns)
       .map(([k, v]) => `${v}${k === v ? '' : ` as ${k}`}`)
-      .join(',\n')} \nFROM ${tableName}\n WHERE ${idMetaArr.map(([k, v]) => `${v.name}=:${k}`)}`
+      .join(',\n')} \nFROM ${tableName}\n WHERE ${idMetaArr.map(([k, v]) => `${v.name}=:${k}`).join(' AND ')}`
     if (forupdate) {
       sqlcommand.sql += ' FOR UPDATE'
     }
@@ -268,7 +268,7 @@ export abstract class AuroraEntity {
       parameterObj[idMetaArr[0][0]] = id == null ? (this as any)[idMetaArr[0][0]] : id
     } else {
       for (const meta of idMetaArr) {
-        parameterObj[meta[0]] = id == null ? (this as any)[idMetaArr[0][0]] : (id as any)[idMetaArr[0][0]] //(this as any)[meta[0]]
+        parameterObj[meta[0]] = id == null ? (this as any)[meta[0]] : (id as any)[meta[0]] //(this as any)[meta[0]]
       }
     }
     return parameterObj
