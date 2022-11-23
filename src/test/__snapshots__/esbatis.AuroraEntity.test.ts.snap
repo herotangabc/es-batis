@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`1. entity composed id test 1`] = `
+"SELECT 
+SYSTEM_NAME as systemName,
+SYSTEM_ID as systemId 
+FROM SYSTEM_MST
+ WHERE SYSTEM_ID=:systemId AND SYSTEM_NAME=:systemName"
+`;
+
+exports[`1. entity composed id test 2`] = `
+Object {
+  "systemId": "123",
+  "systemName": "456",
+}
+`;
