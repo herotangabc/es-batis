@@ -3,22 +3,11 @@ import { camelcase2Underline } from '../utils'
 import { SqlCommand, templateManager } from '../mapping'
 import type { ColumnType } from './annotation'
 
-export type EntityFieldsType<T extends AuroraEntity = AuroraEntity> =
-  | Array<
-    Exclude<
-      keyof T,
-      | 'load'
-      | 'save'
-      | 'saveIntoDynamo'
-      | 'loadForUpdate'
-      | 'loadFromDynamo'
-      | 'delete'
-      | 'loadFromDydb'
-      | 'save2Dydb'
-      | 'save2DydbWithCondition'
-    >
-  >
-  | undefined
+export declare type EntityFieldsNames<T extends AuroraEntity = AuroraEntity> = {
+  [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
+}[keyof T];
+export declare type EntityFieldsType<T extends AuroraEntity = AuroraEntity> = Pick<T, EntityFieldsNames<T>>;
+
 
 const auroraMeta: Record<string, Record<string, ColumnType> | null> = {}
 
