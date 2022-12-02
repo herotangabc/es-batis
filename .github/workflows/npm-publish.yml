@@ -21,6 +21,7 @@ jobs:
 #           EVENT_CONTEXT: ${{ toJSON(github) }}
 #         run: |
 #           echo $EVENT_CONTEXT
+      - run: git config --global init.defaultBranch main
       - uses: actions/checkout@v2
 #         with:
         # "ref" specifies the branch to check out.
