@@ -1,4 +1,4 @@
-[![Node.js Package](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml)[![Coverage Status](https://coveralls.io/repos/github/herotangabc/es-batis/badge.svg?branch=master)](https://coveralls.io/github/herotangabc/es-batis?branch=master)
+[![Node.js Package](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/herotangabc/es-batis/actions/workflows/npm-publish.yml)[![Coverage Status](https://coveralls.io/repos/github/herotangabc/es-batis/badge.svg?branch=main)](https://coveralls.io/github/herotangabc/es-batis?branch=main)
 
 ---
 
