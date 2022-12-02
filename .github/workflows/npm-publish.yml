@@ -52,6 +52,7 @@ jobs:
         env:
         # The secret is passed automatically. Nothing to configure.
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          git-branch: main
 
 #   publish-npm:
 #     needs: build
