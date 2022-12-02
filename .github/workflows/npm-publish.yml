@@ -23,10 +23,10 @@ jobs:
 #           echo $EVENT_CONTEXT
       - run: git config --global init.defaultBranch main
       - uses: actions/checkout@v2
-#         with:
+        with:
         # "ref" specifies the branch to check out.
         # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
-        # ref: main
+          ref: ${{ github.event.release.target_commitish }}
       - uses: actions/setup-node@v2
         with:
           node-version: 14
