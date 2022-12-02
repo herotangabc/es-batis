@@ -198,7 +198,7 @@ export abstract class AuroraEntity {
   async load<T extends AuroraEntity>(
     this: T,
     id: number | string | Record<string, string | number> | undefined = undefined,
-    includes: EntityFieldsType<T> = undefined,
+    includes: [keyof EntityFieldsType<T>] | undefined = undefined,
     forupdate: boolean = false,
     transactionId: string | undefined = undefined
   ): Promise<T | null> {
@@ -274,7 +274,7 @@ export abstract class AuroraEntity {
   async loadForUpdate<T extends AuroraEntity>(
     this: T,
     id: any = undefined,
-    includes: EntityFieldsType<typeof this> = undefined,
+    includes: [keyof EntityFieldsType<typeof this>] | undefined = undefined,
     transactionId: string | undefined = undefined
   ): Promise<T | null> {
     return await this.load(id, includes, true, transactionId)
