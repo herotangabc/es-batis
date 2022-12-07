@@ -17,7 +17,7 @@ dayjs.extend(utc)
 
 // import type {Connection} from 'mysql2'
 
-let result: any = null;
+let result: { records?: Record<string, any>, numberOfRecordsUpdated?: number } | null = null;
 let _sql: string | null = null
 let _parameters: any = null;
 
@@ -26,6 +26,14 @@ class SystemMst extends AuroraEntity {
   public systemId!: string | null
   @DBColumn({ idType: 'uniqueIndex' })
   public systemName: string | null = null
+}
+
+class CodeMst extends AuroraEntity {
+  @DBColumn({ idType: 'uniqueIndex' })
+  public code!: string | null
+  @DBColumn({ idType: 'uniqueIndex' })
+  public name: string | null = null
+  public order: number | null = null
 }
 
 class MockDaoContext implements DaoContext {
@@ -89,8 +97,73 @@ test('1. entity composed id test', async () => {
   const systemMst: SystemMst = new SystemMst()
   systemMst.systemId = '123'
   systemMst.systemName = '456'
-  result = []
+  result = { records: [] }
   await systemMst.load();
+  expect(_sql).toMatchSnapshot()
+  expect(_parameters).toMatchSnapshot()
+}, 5000)
+
+test('2. entity composed id test with one record', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const systemMst: SystemMst = new SystemMst()
+  systemMst.systemId = '123'
+  systemMst.systemName = '456'
+  result = {
+    records: [{
+      systemId: '123',
+      systemName: '456',
+      updateDate: '2022-12-07 12:00:00.235'
+    }]
+  }
+  await systemMst.load();
+  expect(_sql).toMatchSnapshot()
+  expect(_parameters).toMatchSnapshot()
+}, 5000)
+
+test('3. entity load with more than one record throws error', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const systemMst: SystemMst = new SystemMst()
+  systemMst.systemId = '123'
+  systemMst.systemName = '456'
+  result = {
+    records: [{
+      systemId: '123',
+      systemName: '456',
+      updateDate: '2022-12-07 12:00:00.235'
+    }, {
+      systemId: '234',
+      systemName: '657',
+      updateDate: '2022-12-08 12:00:00.235'
+    }]
+  }
+  let f = async () => {
+    await systemMst.load(undefined, ['systemId'], true);
+  }
+  expect(f).rejects.toThrowError()
+}, 5000)
+
+test('4. entity save test', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const systemMst: SystemMst = new SystemMst()
+  systemMst.systemId = '123'
+  systemMst.systemName = '456'
+  result = {
+    numberOfRecordsUpdated: 1
+  }
+  await systemMst.save()
+  expect(_sql).toMatchSnapshot()
+  expect(_parameters).toMatchSnapshot()
+}, 5000)
+
+test('5. entity save test', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const codeMst: CodeMst = new CodeMst()
+  codeMst.code = '123'
+  codeMst.name = '456'
+  result = {
+    numberOfRecordsUpdated: 1
+  }
+  await codeMst.save()
   expect(_sql).toMatchSnapshot()
   expect(_parameters).toMatchSnapshot()
 }, 5000)

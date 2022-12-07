@@ -14,3 +14,53 @@ Object {
   "systemName": "456",
 }
 `;
+
+exports[`2. entity composed id test with one record 1`] = `
+"SELECT 
+SYSTEM_NAME as systemName,
+SYSTEM_ID as systemId 
+FROM SYSTEM_MST
+ WHERE SYSTEM_ID=:systemId AND SYSTEM_NAME=:systemName"
+`;
+
+exports[`2. entity composed id test with one record 2`] = `
+Object {
+  "systemId": "123",
+  "systemName": "456",
+}
+`;
+
+exports[`4. entity save test 1`] = `
+"INSERT INTO SYSTEM_MST 
+(SYSTEM_NAME,
+SYSTEM_ID)
+VALUES(:systemName,
+:systemId)"
+`;
+
+exports[`4. entity save test 2`] = `
+Object {
+  "systemId": "123",
+  "systemName": "456",
+}
+`;
+
+exports[`5. entity save test 1`] = `
+"INSERT INTO CODE_MST 
+(NAME,
+ORDER,
+CODE)
+VALUES(:name,
+:order,
+:code)
+ON DUPLICATE KEY UPDATE
+ORDER = :order"
+`;
+
+exports[`5. entity save test 2`] = `
+Object {
+  "code": "123",
+  "name": "456",
+  "order": null,
+}
+`;

@@ -159,10 +159,16 @@ export abstract class AuroraEntity {
         .map((v) => camelcase2Underline(v))
         .join(',\n')})\nVALUES(${refinedPropertieNames
           .map((v) => `:${v}`)
-          .join(',\n')})\nON DUPLICATE KEY UPDATE\n${refinedPropertieNames
-            .filter((v) => idMetaArr.findIndex((ima) => ima[0] == v) < 0)
-            .map((v) => `${camelcase2Underline(v)} = :${v}`)
-            .join(',\n')}`
+          .join(',\n')})`;
+      const noKeyColumns = refinedPropertieNames
+        .filter((v) => idMetaArr.findIndex((ima) => ima[0] == v) < 0);
+      if (noKeyColumns.length) {
+
+        sqlcommand.sql += `\nON DUPLICATE KEY UPDATE\n${refinedPropertieNames
+          .filter((v) => idMetaArr.findIndex((ima) => ima[0] == v) < 0)
+          .map((v) => `${camelcase2Underline(v)} = :${v}`)
+          .join(',\n')}`
+      }
       for (const propertyName of refinedPropertieNames) {
         propertyValuesMap[propertyName] = (this as any)[propertyName] ?? null
       }
