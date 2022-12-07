@@ -157,9 +157,18 @@ const sql = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
     </select>
 </mapper>
     `
-const systems = await sql.selectList('esbatis.test.nameLike', { name: '%_"\'' })
-for (const system of systems) {
-  system.systemName = '吼吼吼'
-  await system.save()
+try {
+  await dao.beginTransaction()
+  const systems = await sql.selectList('esbatis.test.nameLike', {
+    name: '%_"\'',
+  })
+  for (const system of systems) {
+    system.systemName = '吼吼吼'
+    await system.save()
+  }
+  await dao.commit()
+} catch (err) {
+  console.error(`error happend:${err}`)
+  await dao.rollback()
 }
 ```
