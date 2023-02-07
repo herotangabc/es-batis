@@ -429,3 +429,15 @@ id =:p0 /* id */  limit 10
   "sqlType": undefined,
 }
 `;
+
+exports[`37.Array type parameter test 1`] = `
+SqlCommand {
+  "currentParameterSeq": 0,
+  "parameters": Object {},
+  "sql": "select * from bank t1
+ WHERE
+ name in ('a','b')
+",
+  "sqlType": undefined,
+}
+`;

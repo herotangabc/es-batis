@@ -1081,3 +1081,24 @@ test('36.camelcase2Underline', async () => {
   const text1 = camelcase2Underline('ccBc10')
   expect(text1).toBe('CC_BC_10')
 })
+
+test('37.Array type parameter test', async () => {
+  expect(sqlTemplate).not.toBeUndefined()
+  const sql = sqlTemplate`<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="wb3101">
+<select id="selectBank037"   resultType="string">
+   select * from bank t1
+   <where>
+     <if test="param.length == 2">
+       and name in ('a','b')
+     </if>
+   </where>
+  </select>
+</mapper>
+    `
+  let factory = sql.getSqlFactory('wb3101.selectBank037') as SqlBound
+  const sqlcommand = new SqlCommand()
+
+  factory.appendSql(sqlcommand, { param:['a','b'] })
+  expect(sqlcommand).toMatchSnapshot()
+})

@@ -51,6 +51,8 @@ export const lazyFreezeClone = (paramValue: any): any => {
     paramValue instanceof Date
   ) {
     return paramValue
+  } else if(paramValue instanceof Array) {
+    return Object.freeze([ ...paramValue ])
   } else {
     return Object.freeze({ ...paramValue })
   }
